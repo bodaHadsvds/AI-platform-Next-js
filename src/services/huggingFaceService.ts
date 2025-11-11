@@ -3,8 +3,14 @@ import { InferenceClient } from "@huggingface/inference";
 
 
 const client = new InferenceClient(process.env.HUGGINGFACE_API_TOKEN);
-
-export async function handleSummarization(content: string, send: Function) {
+type SendData =
+  | { status: string; step: string }
+  | { task: "ner"; entity: { type: string; value: string; score: number } }
+  | { task: "ner"; done: boolean; result: { type: string; value: string }[] }
+  | { task: "summarization"; chunk: string }
+  | { task: "summarization"; done: boolean; result: string }
+  | { task: "sentiment"; done: boolean; result: { label: string; score: number } | null };
+export async function handleSummarization(content: string, send: (data: SendData) => void) {
   send({ status: "processing", step: "summarization_start" });
   const result = await client.summarization({
     model: "facebook/bart-large-cnn",
@@ -20,7 +26,7 @@ export async function handleSummarization(content: string, send: Function) {
   send({ task: "summarization", done: true, result: summary });
 }
 
-export async function handleSentiment(content: string, send: Function) {
+export async function handleSentiment(content: string, send: (data: SendData) => void) {
   send({ status: "processing", step: "sentiment_start" });
 
   const result = await client.textClassification({
@@ -35,9 +41,9 @@ export async function handleSentiment(content: string, send: Function) {
     : null;
 
   send({ task: "sentiment", done: true, result: sentiment });
-}
+}  
 
-export async function handleNER(content: string, send: Function) {
+export async function handleNER(content: string,  send: (data: SendData) => void) {
   send({ status: "processing", step: "ner_start" });
 
   const result = await client.tokenClassification({
@@ -49,7 +55,7 @@ export async function handleNER(content: string, send: Function) {
     send({
       task: "ner",
       entity: {
-        type: entity.entity_group,
+    type: entity.entity_group ?? "unknown",
         value: entity.word,
         score: entity.score,
       },
@@ -58,7 +64,7 @@ export async function handleNER(content: string, send: Function) {
   }
 
   const entities = result.map((e) => ({
-    type: e.entity_group,
+    type: e.entity_group ?? "unknown",
     value: e.word,
   }));
 
