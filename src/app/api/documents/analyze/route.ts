@@ -2,6 +2,7 @@ import { queueRequest } from "@/helpers/queueHelper";
 import { createStream } from "@/helpers/streamHelper";
 import { executeWithTimeoutAndRetry } from "@/helpers/timeoutRetryHelper";
 import { handleNER, handleSentiment, handleSummarization } from "@/services/huggingFaceService";
+import { SendData } from "@/types/document";
 import { NextRequest } from "next/server";
 
 export const runtime = "edge";
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
     if (!task) return new Response("Missing task type", { status: 400 });
 
     return queueRequest(async () => {
-      const { stream, send, close } = createStream();
+  const { stream, send, close } = createStream<SendData>();
 
       (async () => {
         try {

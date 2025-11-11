@@ -43,3 +43,12 @@ export interface DocumentData {
     relevance: number;
   }[];
 }
+
+export type SendData =
+  | { status: string; step: string }
+  | { task: "ner"; entity: { type: string; value: string; score: number } }
+  | { task: "ner"; done: boolean; result: { type: string; value: string }[] }
+  | { task: "summarization"; chunk: string }
+  | { task: "summarization"; done: boolean; result: string }
+  | { task: "sentiment"; done: boolean; result: { label: string; score: number } | null }|
+      { status: "error", message: string } |  { status: "completed" } |         "[DONE]"; 

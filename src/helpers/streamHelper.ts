@@ -1,15 +1,16 @@
-export const createStream = () => {
+export const createStream = <T>() => {
   const encoder = new TextEncoder();
-  let controllerRef: ReadableStreamDefaultController<any>;
+  let controllerRef: ReadableStreamDefaultController<Uint8Array>;
 
-  const stream = new ReadableStream({
+  const stream = new ReadableStream<Uint8Array>({
     start(controller) {
       controllerRef = controller;
     },
   });
 
-  const send = (data: any) =>
+  const send = (data: T) => {
     controllerRef.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+  };
 
   const close = () => controllerRef.close();
 

@@ -3,7 +3,7 @@ const maxConcurrent = 3;
 const queue: (() => void)[] = [];
 const maxQueueSize = 10;
 
-export async function queueRequest(fn: () => Promise<Response>) {
+export async function queueRequest(fn: () => Promise<Response>): Promise<Response> {
   if (activeRequests >= maxConcurrent) {
     if (queue.length >= maxQueueSize) {
       return new Response(
@@ -16,11 +16,9 @@ export async function queueRequest(fn: () => Promise<Response>) {
     }
 
     return new Promise((resolve) => {
-      queue.push(async () => {
-        const res = await fn();
-        resolve(res);
-      });
+      queue.push(() => fn().then(resolve)); 
     });
+   
   }
 
   activeRequests++;

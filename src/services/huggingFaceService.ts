@@ -1,15 +1,10 @@
 import { delay } from "@/helpers/delay";
+import { SendData } from "@/types/document";
 import { InferenceClient } from "@huggingface/inference";
 
 
 const client = new InferenceClient(process.env.HUGGINGFACE_API_TOKEN);
-type SendData =
-  | { status: string; step: string }
-  | { task: "ner"; entity: { type: string; value: string; score: number } }
-  | { task: "ner"; done: boolean; result: { type: string; value: string }[] }
-  | { task: "summarization"; chunk: string }
-  | { task: "summarization"; done: boolean; result: string }
-  | { task: "sentiment"; done: boolean; result: { label: string; score: number } | null };
+
 export async function handleSummarization(content: string, send: (data: SendData) => void) {
   send({ status: "processing", step: "summarization_start" });
   const result = await client.summarization({
