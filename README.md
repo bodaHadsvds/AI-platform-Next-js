@@ -93,6 +93,24 @@ Visit [http://localhost:3000](http://localhost:3000) to access the platform.
 ### Backend / API
 
 * **POST /api/documents/analyze**: Streams AI analysis results using server-sent events
+* **GET /api/document/id**: Returns the content of a document by its ID.
+
+### Services
+
+* **huggingFaceService**: Provides AI analysis logic for summarization, sentiment analysis, named entity recognition (NER).                                                                  
+ * **documentService**: Handles document storage and retrieval from the server.
+*  **showDocumentService**: : Retrieves documents for display in the frontend.
+
+### Helpers
+* **delayHelper**: Provides utility functions to pause or delay execution for a specified time.
+
+* **queueHelper**: Manages concurrent requests to prevent server overload.
+
+*  **requestHelper**: Simplifies HTTP request handling across the backend.
+
+*  **streamHelper**: Provides utilities for server-sent events (SSE) streaming.
+
+*  **timeoutRetryHelper**: Handles retries with timeout logic for requests or operations that may fail intermittently.
 
 ### Streaming
 
