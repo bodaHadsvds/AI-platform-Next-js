@@ -25,9 +25,15 @@ export async function streamAnalysis(
     const { done, value } = await reader.read();
     if (done) break;
 
-    buffer += decoder.decode(value, { stream: true });
+    if(task ==="chat"){
+       buffer = decoder.decode(value, { stream: true }); 
+    }else{
+ buffer += decoder.decode(value, { stream: true });
+    }
+   
     const parts = buffer.split("\n\n");
     buffer = parts.pop() || "";
+    console.log('parts', parts)
 
     for (const part of parts) {
       if (!part.startsWith("data:")) continue;

@@ -5,5 +5,5 @@ export const documentSchema = z.object({
     .string()
     .min(1, "Please enter text to analyze.")
     .max(5000, "Text exceeds 5,000 character limit."),
-  task: z.enum(["summarization", "sentiment", "ner"]),
+  task: z.enum(["summarization", "sentiment", "ner","chat"]),
 });

@@ -1,5 +1,5 @@
 type statusType ="idle" | "processing" | "completed" | "error";
-export type TaskType = "summarization" | "sentiment" | "ner";
+export type TaskType = "summarization" | "sentiment" | "ner" |"chat";
 export type EntityType = "PERSON" | "ORG" | "LOCATION" | "DATE" | "EVENT" | "OTHER";
 type sentimentLabel = "Positive" | "Negative" | "Neutral";
 export interface DocumentItem {
@@ -53,6 +53,7 @@ export type SendData =
   | { task: "ner"; entity: { type: string; value: string; score: number } }
   | { task: "ner"; done: boolean; result: { type: string; value: string }[] }
   | { task: "summarization"; chunk: string }
+    | { task: "summarization"; chunk: string } |{ task: "chat"; chunk: string; done:boolean }
   | { task: "summarization"; done: boolean; result: string }
   | { task: "sentiment"; done: boolean; result: { label: string; score: number } | null }|
       { status: "error", message: string } |  { status: "completed" } |         "[DONE]"; 
@@ -67,7 +68,14 @@ interface SummarizationData {
   status: "processing" | "completed" | "error";
   message?: string;
 }
-
+interface ChatData {
+  task: "chat";
+  chunk?: string;       // partial chunk
+  done?: boolean;       // final chunk indicator
+  result?: string;      // optional final result
+  status: "processing" | "completed" | "error";
+  message?: string;
+}
 interface SentimentResult {
   label: "POSITIVE" | "NEGATIVE" | "NEUTRAL";
   score: number;
@@ -102,6 +110,6 @@ export type AnalysisData =
   | SummarizationData
   | SentimentData
   | NerData
-  | ErrorData;
+  | ErrorData|ChatData;
 
 

@@ -46,7 +46,7 @@ export default function DocumentActions({
         value={selectedTask}
         onChange={(e) =>
           setSelectedTask(
-            e.target.value as "summarization" | "sentiment" | "ner"
+            e.target.value as "summarization" | "sentiment" | "ner"|"chat"
           )
         }
         aria-label="Choose analysis task"
@@ -55,6 +55,7 @@ export default function DocumentActions({
         <option value="summarization">🧠 Summarize</option>
         <option value="sentiment">😊 Sentiment</option>
         <option value="ner">🏷️ Entities</option>
+          <option value="chat">🏷️ chat</option>
       </select>
 
       <Button

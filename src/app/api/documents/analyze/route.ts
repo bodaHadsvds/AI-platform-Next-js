@@ -2,6 +2,7 @@ import { queueRequest } from "@/helpers/queueHelper";
 import { createStream } from "@/helpers/streamHelper";
 import { executeWithTimeoutAndRetry } from "@/helpers/timeoutRetryHelper";
 import { handleNER, handleSentiment, handleSummarization } from "@/services/huggingFaceService";
+import { handleSummarizationStreaming } from "@/services/summarizeService";
 import { SendData } from "@/types/document";
 import { NextRequest } from "next/server";
 
@@ -45,13 +46,18 @@ export async function POST(req: NextRequest) {
         try {
           switch (task) {
             case "summarization":
-              await executeWithTimeoutAndRetry(() => handleSummarization(content, send), 30000, 2);
+            
+             await executeWithTimeoutAndRetry(() => handleSummarization(content, send), 30000, 2);
               break;
             case "sentiment":
-              await executeWithTimeoutAndRetry(() => handleSentiment(content, send), 30000, 2);
+
+               await executeWithTimeoutAndRetry(() => handleSentiment(content, send), 30000, 2);
               break;
             case "ner":
               await executeWithTimeoutAndRetry(() => handleNER(content, send), 30000, 2);
+              break;
+              case"chat":
+             await  executeWithTimeoutAndRetry(() => handleSummarizationStreaming(content, send), 30000, 2);
               break;
             default:
               send({ status: "error", message: "Invalid task type" });

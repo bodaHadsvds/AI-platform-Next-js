@@ -17,7 +17,7 @@ export function useSSEAnalyzer() {
 
     try {
       await streamAnalysis(doc.content, task, (data: AnalysisData ) => {
-        
+           
      
         if (data.status === "error") {
           updateDocument(doc.id, (current) => ({
@@ -31,6 +31,7 @@ export function useSSEAnalyzer() {
 
     
         switch (data.task) {
+          
           case "summarization":
             if (data.chunk) {
               updateDocument(doc.id, (current) => ({
@@ -97,7 +98,23 @@ export function useSSEAnalyzer() {
               toast.success(`🏷️ Entities extracted for "${doc.title}"`);
             }
             break;
+ case "chat":  // <-- NEW
+    if (data.chunk) {
+      updateDocument(doc.id, (current) => ({
+        ...current,
+        summary: (current.summary || "") + " " + data.chunk, // you can store chat in summary or a new field
+      }));
+    }
 
+    if (data.done) {
+      updateDocument(doc.id, (current) => ({
+        ...current,
+        summary: data.chunk, // or result if you have it
+        status: "completed",
+      }));
+      toast.success(`💬 "${doc.title}" chat analysis completed!`);
+    }
+    break;
           default:
         
             const _exhaustive: never = data;
